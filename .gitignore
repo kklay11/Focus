@@ -43,3 +43,6 @@ yarn-error.*
 .vscode/
 *.swp
 *.swo
+
+# Claude Code
+.claude/

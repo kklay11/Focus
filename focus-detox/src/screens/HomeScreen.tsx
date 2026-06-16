@@ -14,6 +14,7 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { Colors } from '../constants';
 import { useApp } from '../context';
 import { RootTabParamList } from '../types';
+import { getGreeting } from '../utils';
 
 type NavigationProp = BottomTabNavigationProp<RootTabParamList>;
 type TaskRoute = keyof RootTabParamList;
@@ -315,16 +316,6 @@ export default function HomeScreen() {
       </ScrollView>
     </SafeAreaView>
   );
-}
-
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 6) return '夜深了';
-  if (hour < 12) return '早上好';
-  if (hour < 14) return '中午好';
-  if (hour < 18) return '下午好';
-  if (hour < 22) return '晚上好';
-  return '夜深了';
 }
 
 const styles = StyleSheet.create({

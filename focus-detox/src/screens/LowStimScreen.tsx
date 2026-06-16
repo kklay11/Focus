@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants';
 import { useApp } from '../context';
+import { formatDuration } from '../utils';
 
 const { width, height } = Dimensions.get('window');
 
@@ -64,7 +65,6 @@ export default function LowStimScreen() {
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
-  const progressAnim = useRef(new Animated.Value(0)).current;
   const pulseLoopRef = useRef<Animated.CompositeAnimation | null>(null);
   const rotateLoopRef = useRef<Animated.CompositeAnimation | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -145,12 +145,6 @@ export default function LowStimScreen() {
       second: '2-digit',
       hour12: false
     });
-  };
-
-  const formatCountdown = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const isWithinWindow = (start: string, end: string) => {
@@ -510,7 +504,7 @@ export default function LowStimScreen() {
         {/* 倒计时圆环 */}
         <View style={styles.timerWrapper}>
           <Animated.View style={[styles.timerCircle, { transform: [{ scale: pulseAnim }] }]}>
-            <Text style={styles.timerText}>{formatCountdown(timeLeft)}</Text>
+            <Text style={styles.timerText}>{formatDuration(timeLeft)}</Text>
             <Text style={styles.timerLabel}>剩余时间</Text>
           </Animated.View>
         </View>

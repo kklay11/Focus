@@ -1,4 +1,4 @@
-// 通用工具函数
+// 通用工具函数 —— 全应用唯一的纯函数工具集合
 
 // 生成唯一ID
 export const generateId = (): string => {
@@ -12,17 +12,7 @@ export const formatDuration = (seconds: number): string => {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 };
 
-// 格式化时长 (分钟 -> X小时Y分钟)
-export const formatMinutesReadable = (minutes: number): string => {
-  if (minutes < 60) {
-    return `${minutes}分钟`;
-  }
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return mins > 0 ? `${hours}小时${mins}分钟` : `${hours}小时`;
-};
-
-// 格式化日期
+// 格式化日期 (Date -> YYYY-MM-DD)
 export const formatDate = (date: Date): string => {
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
@@ -46,44 +36,34 @@ export const getGreeting = (): string => {
   return '夜深了';
 };
 
-// 计算连胜天数
+// 计算连续天数：要求最近一次记录在今天或昨天，再向前累计连续天数
 export const calculateStreak = (completions: { date: string }[]): number => {
   if (completions.length === 0) return 0;
-  
+
   const today = getTodayString();
-  const sortedDates = [...new Set(completions.map(c => c.date))].sort().reverse();
-  
-  if (sortedDates[0] !== today) return 0;
-  
+  const sortedDates = [...new Set(completions.map((c) => c.date))].sort().reverse();
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = formatDate(yesterday);
+
+  // 最近一次记录既不是今天也不是昨天，连胜中断
+  if (sortedDates[0] !== today && sortedDates[0] !== yesterdayStr) {
+    return 0;
+  }
+
   let streak = 1;
-  const getDateFromStr = (str: string) => new Date(str);
-  
   for (let i = 0; i < sortedDates.length - 1; i++) {
-    const current = getDateFromStr(sortedDates[i]);
-    const prev = getDateFromStr(sortedDates[i + 1]);
+    const current = new Date(sortedDates[i]);
+    const prev = new Date(sortedDates[i + 1]);
     const diffDays = Math.floor((current.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 1) {
       streak++;
     } else {
       break;
     }
   }
-  
-  return streak;
-};
 
-// 检查是否在低刺激窗口内
-export const isInLowStimWindow = (
-  currentTime: Date,
-  startHour: number,
-  startMinute: number,
-  endHour: number,
-  endMinute: number
-): boolean => {
-  const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
-  const startMinutes = startHour * 60 + startMinute;
-  const endMinutes = endHour * 60 + endMinute;
-  
-  return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+  return streak;
 };

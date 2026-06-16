@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, BOREDOM_TRAINING_TYPES } from '../constants';
 import { useApp } from '../context';
+import { formatDuration } from '../utils';
 
 const { width } = Dimensions.get('window');
 
@@ -250,12 +251,6 @@ export default function TrainingScreen() {
     };
   }, [isTraining]);
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
   const selectTraining = (type: TrainingType) => {
     setSelectedType(type);
     setMode('intro');
@@ -486,7 +481,7 @@ export default function TrainingScreen() {
           {/* 计时器 */}
           <View style={styles.timerContainer}>
             <Animated.View style={[styles.timerCircle, { transform: [{ scale: pulseAnim }] }]}>
-              <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
+              <Text style={styles.timerText}>{formatDuration(timeLeft)}</Text>
               <Text style={styles.timerLabel}>剩余时间</Text>
             </Animated.View>
           </View>
@@ -520,7 +515,7 @@ export default function TrainingScreen() {
         </View>
         <Text style={styles.completeTitle}>练习完成！</Text>
         <Text style={styles.completeSubtitle}>
-          本次训练 {formatTime(elapsedTime)}
+          本次训练 {formatDuration(elapsedTime)}
         </Text>
 
         <View style={styles.scoreSection}>

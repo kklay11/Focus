@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, MICRO_RESET_ACTIONS } from '../constants';
 import { useApp } from '../context';
-import { getTodayString } from '../utils/storage';
+import { getTodayString } from '../utils';
 
 const { width } = Dimensions.get('window');
 
@@ -41,7 +41,6 @@ export default function ExamResetScreen() {
 
   // 动画
   const pulseAnim = useRef(new Animated.Value(1)).current;
-  const rotateAnim = useRef(new Animated.Value(0)).current;
   const progressAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const timerRef = useRef<NodeJS.Timeout | null>(null);

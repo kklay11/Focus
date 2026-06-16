@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { UserData, UserStats, UserSettings, LowStimCompletion, BoredomSession, ExamReset } from '../types';
-import { getOrInitUserData, saveUserData, generateId, getTodayString, formatDate } from '../utils/storage';
-import { DEFAULT_SETTINGS } from '../constants';
+import { getOrInitUserData, saveUserData, createDefaultUserData } from '../utils/storage';
+import { generateId, getTodayString, calculateStreak } from '../utils';
 
 // 状态类型
 interface AppState {
@@ -36,38 +36,6 @@ const initialState: AppState = {
     nightWindow: false,
     training: false,
   },
-};
-
-// 计算连续天数
-const calculateStreak = (completions: LowStimCompletion[]): number => {
-  if (completions.length === 0) return 0;
-
-  const today = getTodayString();
-  const sortedDates = [...new Set(completions.map(c => c.date))].sort().reverse();
-  
-  // 检查今天或昨天是否有记录
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayStr = formatDate(yesterday);
-  
-  if (sortedDates[0] !== today && sortedDates[0] !== yesterdayStr) {
-    return 0;
-  }
-
-  let streak = 1;
-  for (let i = 0; i < sortedDates.length - 1; i++) {
-    const current = new Date(sortedDates[i]);
-    const prev = new Date(sortedDates[i + 1]);
-    const diffDays = Math.floor((current.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) {
-      streak++;
-    } else {
-      break;
-    }
-  }
-
-  return streak;
 };
 
 // Reducer
@@ -250,23 +218,6 @@ interface AppContextType {
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
-
-// 创建默认用户数据（不使用 AsyncStorage）
-const createDefaultUserData = (): UserData => {
-  return {
-    id: generateId(),
-    createdAt: new Date(),
-    settings: { ...DEFAULT_SETTINGS },
-    stats: {
-      totalBoredomMinutes: 0,
-      currentStreak: 0,
-      longestStreak: 0,
-      lowStimWindowCompletions: [],
-      boredomSessions: [],
-      examResets: [],
-    },
-  };
-};
 
 // Provider
 export function AppProvider({ children }: { children: ReactNode }) {
