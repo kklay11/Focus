@@ -13,11 +13,23 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../constants';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, Gradients, GRADIENT_DIRECTION } from '../constants';
 import { useApp } from '../context';
 import { formatDuration } from '../utils';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
+
+// 根据窗口按钮状态返回渐变色：已完成→淡绿，禁用→灰，否则用对应时段渐变
+const windowButtonColors = (
+  done: boolean,
+  canStart: boolean,
+  base: readonly [string, string]
+): readonly [string, string] => {
+  if (done) return [Colors.success + '24', Colors.success + '24'];
+  if (!canStart) return [Colors.textMuted, Colors.textMuted];
+  return base;
+};
 
 type WindowType = 'morning' | 'night';
 type ScreenMode = 'list' | 'countdown';
@@ -348,27 +360,31 @@ export default function LowStimScreen() {
                 </View>
               </View>
               <TouchableOpacity
-                style={[
-                  styles.windowActionButton,
-                  todayTasks.morningWindow && styles.windowActionButtonDone,
-                  !canStartMorning && !todayTasks.morningWindow && styles.windowActionButtonDisabled,
-                ]}
+                style={styles.windowActionWrap}
+                activeOpacity={0.9}
                 onPress={() => startCountdown('morning')}
                 disabled={!canStartMorning}
               >
-                <Ionicons
-                  name={todayTasks.morningWindow ? 'checkmark-circle' : 'play-circle'}
-                  size={18}
-                  color={todayTasks.morningWindow ? Colors.success : Colors.card}
-                />
-                <Text
-                  style={[
-                    styles.windowActionButtonText,
-                    todayTasks.morningWindow && styles.windowActionButtonTextDone,
-                  ]}
+                <LinearGradient
+                  colors={windowButtonColors(todayTasks.morningWindow, canStartMorning, Gradients.morning)}
+                  start={GRADIENT_DIRECTION.start}
+                  end={GRADIENT_DIRECTION.end}
+                  style={styles.windowActionButton}
                 >
-                  {todayTasks.morningWindow ? '今天已完成' : isMorningCustomSelected && !customMorningActivity.trim() ? '先填写活动' : '用这个活动开始'}
-                </Text>
+                  <Ionicons
+                    name={todayTasks.morningWindow ? 'checkmark-circle' : 'play-circle'}
+                    size={18}
+                    color={todayTasks.morningWindow ? Colors.success : Colors.card}
+                  />
+                  <Text
+                    style={[
+                      styles.windowActionButtonText,
+                      todayTasks.morningWindow && styles.windowActionButtonTextDone,
+                    ]}
+                  >
+                    {todayTasks.morningWindow ? '今天已完成' : isMorningCustomSelected && !customMorningActivity.trim() ? '先填写活动' : '用这个活动开始'}
+                  </Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
 
@@ -444,28 +460,31 @@ export default function LowStimScreen() {
                 </View>
               </View>
               <TouchableOpacity
-                style={[
-                  styles.windowActionButton,
-                  styles.nightActionButton,
-                  todayTasks.nightWindow && styles.windowActionButtonDone,
-                  !canStartNight && !todayTasks.nightWindow && styles.windowActionButtonDisabled,
-                ]}
+                style={styles.windowActionWrap}
+                activeOpacity={0.9}
                 onPress={() => startCountdown('night')}
                 disabled={!canStartNight}
               >
-                <Ionicons
-                  name={todayTasks.nightWindow ? 'checkmark-circle' : 'play-circle'}
-                  size={18}
-                  color={todayTasks.nightWindow ? Colors.success : Colors.card}
-                />
-                <Text
-                  style={[
-                    styles.windowActionButtonText,
-                    todayTasks.nightWindow && styles.windowActionButtonTextDone,
-                  ]}
+                <LinearGradient
+                  colors={windowButtonColors(todayTasks.nightWindow, canStartNight, Gradients.night)}
+                  start={GRADIENT_DIRECTION.start}
+                  end={GRADIENT_DIRECTION.end}
+                  style={styles.windowActionButton}
                 >
-                  {todayTasks.nightWindow ? '今天已完成' : isNightCustomSelected && !customNightActivity.trim() ? '先填写活动' : '用这个活动开始'}
-                </Text>
+                  <Ionicons
+                    name={todayTasks.nightWindow ? 'checkmark-circle' : 'play-circle'}
+                    size={18}
+                    color={todayTasks.nightWindow ? Colors.success : Colors.card}
+                  />
+                  <Text
+                    style={[
+                      styles.windowActionButtonText,
+                      todayTasks.nightWindow && styles.windowActionButtonTextDone,
+                    ]}
+                  >
+                    {todayTasks.nightWindow ? '今天已完成' : isNightCustomSelected && !customNightActivity.trim() ? '先填写活动' : '用这个活动开始'}
+                  </Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
           </View>
@@ -504,6 +523,12 @@ export default function LowStimScreen() {
         {/* 倒计时圆环 */}
         <View style={styles.timerWrapper}>
           <Animated.View style={[styles.timerCircle, { transform: [{ scale: pulseAnim }] }]}>
+            <LinearGradient
+              colors={windowType === 'morning' ? Gradients.morning : Gradients.night}
+              start={GRADIENT_DIRECTION.start}
+              end={GRADIENT_DIRECTION.end}
+              style={StyleSheet.absoluteFill}
+            />
             <Text style={styles.timerText}>{formatDuration(timeLeft)}</Text>
             <Text style={styles.timerLabel}>剩余时间</Text>
           </Animated.View>
@@ -711,24 +736,17 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     lineHeight: 18,
   },
-  windowActionButton: {
+  windowActionWrap: {
     marginTop: 14,
-    backgroundColor: Colors.primary,
+    borderRadius: 14,
+    overflow: 'hidden',
+  },
+  windowActionButton: {
     borderRadius: 14,
     paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-  },
-  nightActionButton: {
-    backgroundColor: Colors.accent,
-  },
-  windowActionButtonDone: {
-    backgroundColor: Colors.success + '18',
-  },
-  windowActionButtonDisabled: {
-    backgroundColor: Colors.textMuted,
-    opacity: 0.55,
   },
   windowActionButtonText: {
     fontSize: 15,
@@ -787,24 +805,23 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 100,
-    backgroundColor: Colors.card,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 4,
-    borderColor: Colors.primary,
     shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 0 },
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
-    shadowRadius: 20,
+    shadowRadius: 24,
+    elevation: 10,
   },
   timerText: {
     fontSize: 48,
-    fontWeight: '200',
-    color: Colors.text,
+    fontWeight: '300',
+    color: '#FFFFFF',
   },
   timerLabel: {
     fontSize: 14,
-    color: Colors.textMuted,
+    color: 'rgba(255, 255, 255, 0.85)',
     marginTop: 4,
   },
   activityCard: {

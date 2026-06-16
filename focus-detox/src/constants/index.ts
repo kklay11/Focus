@@ -24,14 +24,39 @@ export const Colors = {
   text: '#1F3147',
   textSecondary: '#5F7085',
   textMuted: '#8A99AD',
-  
-  // 渐变
-  gradient: {
-    primary: ['#DCE6FF', '#EEF3FF', '#FFFFFF'],
-    accent: ['#EFE9FF', '#F7F2FF'],
-    success: ['#DDF6EA', '#F3FBF7'],
-    dark: ['#F6F8FC', '#F2F6FB', '#FFFFFF'],
-  },
+
+  // 边框 / 分隔
+  border: '#E5ECF6',
+
+  // 阴影
+  shadow: '#9FB2CC',
+};
+
+// 渐变色板 —— 用于焦点卡片、主按钮、计时圆环等
+// 以 readonly 元组形式声明，直接满足 expo-linear-gradient 的 colors 类型
+export const Gradients = {
+  // 主操作 / 焦点：蓝 → 薰衣草紫
+  primary: ['#7C9BFF', '#8F7CF7'] as const,
+  // 强调：偏紫
+  accent: ['#9A8BFF', '#B6A2FF'] as const,
+  // 成功 / 完成
+  success: ['#5FC59A', '#4FB487'] as const,
+  // 晨间：天空蓝
+  morning: ['#7CB8FF', '#6F8FF7'] as const,
+  // 夜间：靛蓝 → 紫
+  night: ['#7E7BF0', '#6F8FF7'] as const,
+  // 暖色：用于提醒 / 等级
+  warm: ['#F7B36A', '#F2924E'] as const,
+  // 页面背景：极浅蓝白
+  appBackground: ['#EEF3FF', '#F6F8FC'] as const,
+  // 浅色卡片底：用于柔和的 hero 背景
+  softCard: ['#FFFFFF', '#F4F8FF'] as const,
+};
+
+// 渐变默认方向：左上 → 右下
+export const GRADIENT_DIRECTION = {
+  start: { x: 0, y: 0 },
+  end: { x: 1, y: 1 },
 };
 
 // 默认设置

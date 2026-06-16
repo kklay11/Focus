@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, ACHIEVEMENTS, DEFAULT_SETTINGS } from '../constants';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, ACHIEVEMENTS, DEFAULT_SETTINGS, Gradients, GRADIENT_DIRECTION } from '../constants';
 import { useApp } from '../context';
 import { UserSettings } from '../types';
 import { clearAllData } from '../utils/storage';
@@ -385,7 +386,12 @@ export default function ProfileScreen() {
           <Text style={styles.pageSubtitle}>把设置和反馈调成更适合你坚持的样子</Text>
         </View>
 
-        <View style={styles.levelCard}>
+        <LinearGradient
+          colors={Gradients.primary}
+          start={GRADIENT_DIRECTION.start}
+          end={GRADIENT_DIRECTION.end}
+          style={styles.levelCard}
+        >
           <View style={styles.levelHeader}>
             <View style={styles.levelBadge}>
               <Text style={styles.levelNumber}>{userLevel.level}</Text>
@@ -402,7 +408,7 @@ export default function ProfileScreen() {
           <View style={styles.progressBar}>
             <View style={[styles.progressFill, { width: `${Math.min(progress, 100)}%` }]} />
           </View>
-        </View>
+        </LinearGradient>
 
         <View style={styles.statsGrid}>
           <View style={styles.statCard}>
@@ -630,30 +636,34 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
   levelCard: {
-    backgroundColor: Colors.card,
     borderRadius: 24,
-    padding: 20,
+    padding: 22,
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: Colors.primaryLight,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 8,
   },
   levelHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 18,
   },
   levelBadge: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.primary,
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   levelNumber: {
     fontSize: 24,
     fontWeight: '700',
-    color: Colors.card,
+    color: '#FFFFFF',
   },
   levelInfo: {
     marginLeft: 16,
@@ -662,22 +672,22 @@ const styles = StyleSheet.create({
   levelTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text,
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   levelSubtitle: {
     fontSize: 13,
-    color: Colors.textMuted,
+    color: 'rgba(255, 255, 255, 0.85)',
   },
   progressBar: {
     height: 8,
-    backgroundColor: Colors.backgroundLight,
+    backgroundColor: 'rgba(255, 255, 255, 0.28)',
     borderRadius: 4,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: Colors.primary,
+    backgroundColor: '#FFFFFF',
     borderRadius: 4,
   },
   statsGrid: {

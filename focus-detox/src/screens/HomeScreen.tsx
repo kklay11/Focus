@@ -11,10 +11,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { Colors } from '../constants';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, Gradients, GRADIENT_DIRECTION } from '../constants';
 import { useApp } from '../context';
 import { RootTabParamList } from '../types';
 import { getGreeting } from '../utils';
+
+// 把推荐动作的主题色映射到对应的渐变，保证语义色彩 + 渐变质感
+const gradientForTint = (tint: string): readonly [string, string] => {
+  switch (tint) {
+    case Colors.success:
+      return Gradients.success;
+    case Colors.accent:
+      return Gradients.accent;
+    case Colors.warning:
+      return Gradients.warm;
+    default:
+      return Gradients.primary;
+  }
+};
 
 type NavigationProp = BottomTabNavigationProp<RootTabParamList>;
 type TaskRoute = keyof RootTabParamList;
@@ -179,9 +194,14 @@ export default function HomeScreen() {
           <Text style={styles.subtitle}>把今天最关键的一步先做掉，后面会轻很多</Text>
         </View>
 
-        <View style={styles.recommendCard}>
+        <LinearGradient
+          colors={Gradients.softCard}
+          start={GRADIENT_DIRECTION.start}
+          end={GRADIENT_DIRECTION.end}
+          style={styles.recommendCard}
+        >
           <View style={styles.recommendTopRow}>
-            <View style={[styles.recommendIcon, { backgroundColor: recommendedAction.tint + '18' }]}>
+            <View style={[styles.recommendIcon, { backgroundColor: recommendedAction.tint + '1F' }]}>
               <Ionicons name={recommendedAction.icon} size={26} color={recommendedAction.tint} />
             </View>
             <View style={styles.recommendTextWrap}>
@@ -192,13 +212,21 @@ export default function HomeScreen() {
           </View>
 
           <TouchableOpacity
-            style={[styles.recommendButton, { backgroundColor: recommendedAction.tint }]}
+            style={styles.recommendButtonWrap}
+            activeOpacity={0.9}
             onPress={() => navigation.navigate(recommendedAction.route)}
           >
-            <Text style={styles.recommendButtonText}>{recommendedAction.buttonLabel}</Text>
-            <Ionicons name="arrow-forward" size={18} color={Colors.card} />
+            <LinearGradient
+              colors={gradientForTint(recommendedAction.tint)}
+              start={GRADIENT_DIRECTION.start}
+              end={GRADIENT_DIRECTION.end}
+              style={styles.recommendButton}
+            >
+              <Text style={styles.recommendButtonText}>{recommendedAction.buttonLabel}</Text>
+              <Ionicons name="arrow-forward" size={18} color={Colors.card} />
+            </LinearGradient>
           </TouchableOpacity>
-        </View>
+        </LinearGradient>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -343,17 +371,16 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   recommendCard: {
-    backgroundColor: Colors.card,
     borderRadius: 24,
     padding: 20,
     marginBottom: 24,
     borderWidth: 1,
     borderColor: Colors.primaryLight,
-    shadowColor: '#A8B6CC',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 18,
-    elevation: 6,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.16,
+    shadowRadius: 22,
+    elevation: 7,
   },
   recommendTopRow: {
     flexDirection: 'row',
@@ -388,9 +415,18 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     lineHeight: 21,
   },
+  recommendButtonWrap: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.28,
+    shadowRadius: 12,
+    elevation: 4,
+  },
   recommendButton: {
     borderRadius: 16,
-    paddingVertical: 14,
+    paddingVertical: 15,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',

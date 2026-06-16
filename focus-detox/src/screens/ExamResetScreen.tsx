@@ -13,7 +13,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, MICRO_RESET_ACTIONS } from '../constants';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, MICRO_RESET_ACTIONS, Gradients, GRADIENT_DIRECTION } from '../constants';
 import { useApp } from '../context';
 import { getTodayString } from '../utils';
 
@@ -407,9 +408,16 @@ export default function ExamResetScreen() {
         {/* 操作按钮 */}
         <View style={styles.guideActions}>
           {!isCountingDown && !showComplete && (
-            <TouchableOpacity style={styles.startActionBtn} onPress={startCountdown}>
-              <Ionicons name="play" size={20} color={Colors.card} />
-              <Text style={styles.startActionBtnText}>开始计时</Text>
+            <TouchableOpacity style={styles.startActionBtnWrap} activeOpacity={0.9} onPress={startCountdown}>
+              <LinearGradient
+                colors={Gradients.primary}
+                start={GRADIENT_DIRECTION.start}
+                end={GRADIENT_DIRECTION.end}
+                style={styles.startActionBtn}
+              >
+                <Ionicons name="play" size={20} color={Colors.card} />
+                <Text style={styles.startActionBtnText}>开始计时</Text>
+              </LinearGradient>
             </TouchableOpacity>
           )}
           {showComplete && (
@@ -884,11 +892,19 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: 12,
   },
+  startActionBtnWrap: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 5,
+  },
   startActionBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.primary,
     borderRadius: 16,
     paddingVertical: 18,
   },

@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, BOREDOM_TRAINING_TYPES } from '../constants';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, BOREDOM_TRAINING_TYPES, Gradients, GRADIENT_DIRECTION } from '../constants';
 import { useApp } from '../context';
 import { formatDuration } from '../utils';
 
@@ -420,8 +421,15 @@ export default function TrainingScreen() {
               </View>
             </View>
 
-            <TouchableOpacity style={styles.startBtn} onPress={startTraining}>
-              <Text style={styles.startBtnText}>开始练习</Text>
+            <TouchableOpacity style={styles.startBtnWrap} activeOpacity={0.9} onPress={startTraining}>
+              <LinearGradient
+                colors={Gradients.primary}
+                start={GRADIENT_DIRECTION.start}
+                end={GRADIENT_DIRECTION.end}
+                style={styles.startBtn}
+              >
+                <Text style={styles.startBtnText}>开始练习</Text>
+              </LinearGradient>
             </TouchableOpacity>
           </Animated.View>
         </ScrollView>
@@ -746,12 +754,20 @@ const styles = StyleSheet.create({
   durationBtnTextSelected: {
     color: Colors.primary,
   },
+  startBtnWrap: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginTop: 8,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 5,
+  },
   startBtn: {
-    backgroundColor: Colors.primary,
     borderRadius: 16,
     paddingVertical: 18,
     alignItems: 'center',
-    marginTop: 8,
   },
   startBtnText: {
     fontSize: 18,
